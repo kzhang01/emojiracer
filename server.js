@@ -9,7 +9,28 @@ app.use(express.static('public'));
 // then... within callback, use socket.on, socket.emit, socket.broadcast, etc.
 // NOTE THAT WE ARE LISTENING WITH server, NOT app!
 
-// store position of both emoji on server, send on each connection
-// client sends back each movement
+/* events
+-connect: server sends x-coordinate of emojis
+-click: client sends name of button clicked
+*/
+
+let player1X = 0;
+let player2X = 0;
+
+io.on("connection", socket => {
+    io.emit("join", {
+        player1X: player1X,
+        player2X: player2X
+    });
+    socket.on("click", data => {
+        if(data.buttonClicked === "player1Btn") {
+            player1X++;
+        } else {
+            player2X++;
+        }
+        console.log("p1x", player1X);
+        console.log("p2x", player2X);
+    });
+});
 
 server.listen(3000);
